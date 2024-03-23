@@ -1,22 +1,25 @@
 import React, { ButtonHTMLAttributes, DetailedHTMLProps } from 'react';
 import { cva, VariantProps } from 'class-variance-authority';
 
-const buttonstyle = cva('rounded', {
-  defaultVariants: {
-    size: 'sm',
-    variants: 'primary',
-  },
-  variants: {
-    size: {
-      md: 'py-2 px-4',
-      sm: 'p-2',
+const buttonstyle = cva(
+  'rounded flex gap-2 text-sm font-medium transition hover:scale-105 hover:shadow-xl focus:outline-none focus:ring',
+  {
+    defaultVariants: {
+      size: 'md',
+      variants: 'primary',
     },
     variants: {
-      primary: 'bg-blue-500 text-white hover:bg-blue-600',
-      secondary: 'border border-gray-100 hover:bg-gray-100',
+      size: {
+        md: 'px-8 py-3',
+        sm: 'py-2 px-4',
+      },
+      variants: {
+        primary: 'bg-indigo-600  text-white active:bg-indigo-500',
+        secondary: 'bg-red-600 active:bg-red-500  text-white ',
+      },
     },
-  },
-});
+  }
+);
 
 type Props = VariantProps<typeof buttonstyle> &
   DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;

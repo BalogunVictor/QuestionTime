@@ -1,3 +1,4 @@
 import { Button } from './buttons';
+import { HomePage } from './Home';
 
-export { Button };
+export { Button, HomePage };
