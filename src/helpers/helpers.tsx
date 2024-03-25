@@ -1,5 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { useRouter } from 'next/router';
+import { MyFormData, QuestionData } from 'src/models/model';
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -18,14 +19,28 @@ export async function RegisterMail(payload: string) {
 // fetch questions
 export async function fetchQuestions(payload: string) {
   try {
-    const token = JSON.parse(payload);
-    const response = await axios.get('/questions', {
+    const { data } = await axios.get('/questions', {
       headers: {
-        Token: token,
+        token: payload,
       },
     });
-    return response.data;
+    return data;
   } catch (error) {
-    throw new Error('Network error');
+    console.error('Error fetching questions:', error);
+    throw new Error('Failed to fetch questions');
+  }
+}
+
+// add New question
+export async function addQuestion(token: string, formData: MyFormData) {
+  try {
+    const { data } = await axios.post('/questions', formData, {
+      headers: { token },
+    });
+    fetchQuestions(token);
+    return data;
+  } catch (error) {
+    console.error('Error adding question:', error);
+    throw new Error('Failed to add question');
   }
 }

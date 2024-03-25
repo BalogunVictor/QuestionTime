@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { fetchQuestions, RegisterMail } from 'src/helpers/helpers';
+import { MyFormData, QuestionData } from 'src/models/model';
 
 export function useRegister(payload: string) {
   return useQuery({
@@ -9,7 +10,9 @@ export function useRegister(payload: string) {
   });
 }
 
-export function useFetchQuestions(payload: any) {
+export function useFetchQuestions(
+  payload: any
+): UseQueryResult<QuestionData, Error> {
   return useQuery({
     queryFn: () => fetchQuestions(payload),
     queryKey: ['questions', payload],

@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 
-type AuthState = {
+interface AuthState {
   auth: {
     active: boolean;
     token: string;
   };
   setToken: (payload: string) => void;
-};
+}
 
 export const useAuthStore = create<AuthState>((set) => ({
   auth: {

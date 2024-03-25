@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { HomePage } from '@ui/Home';
+import { HomePage } from '@ui/home';
 import Head from 'next/head';
 import { Layout } from 'src/layouts';
 
