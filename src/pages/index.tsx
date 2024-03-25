@@ -1,7 +1,8 @@
 import { ReactElement } from 'react';
-import { HomePage } from '@ui/home';
 import Head from 'next/head';
 import { Layout } from 'src/layouts';
+
+import { HomePage } from '../components/home';
 
 import { NextPageWithLayout } from './_app';
 
