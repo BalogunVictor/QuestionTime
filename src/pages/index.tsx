@@ -2,7 +2,8 @@ import { ReactElement, useState } from 'react';
 import toast from 'react-hot-toast';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useRegister } from 'src/hooks/hooks';
+import { RegisterMail } from 'src/helpers/helpers';
+import { useRegister } from 'src/hooks/hooks'; // Import useRegister hook
 import { Layout } from 'src/layouts';
 import { useAuthStore } from 'src/store/store';
 
@@ -11,42 +12,31 @@ import { NextPageWithLayout } from './_app';
 const Home: NextPageWithLayout = () => {
   const router = useRouter();
   const [email, setEmail] = useState<string>('');
+  const setToken = useAuthStore((state) => state.setToken);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
-  const { data: token, isLoading, isError } = useRegister(email);
-  const setToken = useAuthStore((state) => state.setToken);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // If isLoading is true, it means the request is still pending
-    if (isLoading) {
-      toast.promise(Promise.resolve(), {
-        error: 'Error!',
-        loading: 'Creating...',
-        success: 'Success!',
-      });
-      return;
-    }
+    try {
+      const { data: token } = await RegisterMail(email); // Call RegisterMail function
 
-    // If isError is true, it means there was an error while fetching the data
-    if (isError) {
+      if (!token) {
+        toast.error('Token not received, please try again');
+      } else {
+        setToken(token);
+        toast.success('Successful...!');
+        router.push('/question');
+      }
+    } catch (error) {
       toast.error('Error creating token');
-      return;
-    }
-
-    if (!token) {
-      toast.error('Token not received please try again');
-    } else {
-      // If token is available
-      setToken(token);
-      toast.success('Successful...!');
-      router.push('/question');
+      console.error('Error:', error);
     }
   };
+
   return (
     <>
       <Head>
