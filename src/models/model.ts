@@ -4,6 +4,9 @@ export interface MyDialogProps {
   title: string;
   token: string;
   onClose: () => void;
+  refetch: () => void;
+  questionId?: string;
+  existingQuestionData?: MyFormData | null;
 }
 
 export interface MyFormData {

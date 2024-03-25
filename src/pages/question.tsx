@@ -3,12 +3,20 @@ import { AiFillDelete } from 'react-icons/ai';
 import { BiEdit } from 'react-icons/bi';
 import { Button } from '@ui/buttons';
 import { Modal } from '@ui/modal';
+import { useRouter } from 'next/router';
+import { deleteQuestion, editQuestion } from 'src/helpers/helpers';
 import { useFetchQuestions } from 'src/hooks/hooks';
+import { Layout } from 'src/layouts';
 import { MyFormData } from 'src/models/model';
 import { useAuthStore } from 'src/store/store';
 
 const Index = () => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [editingQuestionId, setEditingQuestionId] = useState<any>(null);
+  const [existingQuestionData, setExistingQuestionData] =
+    useState<MyFormData | null>(null);
+
   const { token } = useAuthStore((state) => state.auth);
   const {
     data: questionData,
@@ -19,19 +27,50 @@ const Index = () => {
 
   const handleCloseModal = () => {
     setIsOpen(false);
-    refetch(); // Refetch data when modal is closed
+    setEditingQuestionId(null);
+    setExistingQuestionData(null);
+    refetch();
   };
 
+  const handleEditQuestion = (questionId: string) => {
+    setEditingQuestionId(questionId);
+    setIsOpen(true);
+
+    // Retrieve existing question data based on questionId
+    const question = questionData?.[questionId]; // Optional chaining here
+    setExistingQuestionData(question || null);
+  };
+
+  const handleDeleteQuestion = async (questionId: string) => {
+    try {
+      await deleteQuestion(token, questionId);
+      refetch();
+    } catch (error) {
+      console.error('Error deleting question:', error);
+    }
+  };
+
+  // Redirect to homepage if no token is available
+  useEffect(() => {
+    if (!token) {
+      router.push('/');
+    }
+  }, [token]);
+
   return (
-    <>
+    <Layout>
       <main className="mx-auto flex max-w-screen-xl flex-col items-center gap-8 p-4 sm:px-6 lg:px-8">
         <Modal
+          existingQuestionData={existingQuestionData}
           isOpen={isOpen}
           onClose={handleCloseModal}
+          questionId={editingQuestionId}
+          refetch={refetch}
           setIsOpen={setIsOpen}
-          title="Add New question"
+          title={editingQuestionId ? 'Edit Question' : 'Add New question'}
           token={token}
         />
+
         <div className="mb-4 flex justify-end">
           <Button onClick={() => setIsOpen(true)}>Add New question</Button>
         </div>
@@ -61,11 +100,14 @@ const Index = () => {
                     </fieldset>
                   </div>
                   <div className="space mt-2 flex flex-col space-y-4 md:flex-row md:justify-between md:space-y-0">
-                    <Button>
+                    <Button onClick={() => handleEditQuestion(questionId)}>
                       Edit
                       <BiEdit className="text-lg" />
                     </Button>
-                    <Button variants="secondary">
+                    <Button
+                      onClick={() => handleDeleteQuestion(questionId)}
+                      variants="secondary"
+                    >
                       Delete
                       <AiFillDelete className="text-lg" />
                     </Button>
@@ -78,7 +120,7 @@ const Index = () => {
           <div>No questions available</div>
         )}
       </main>
-    </>
+    </Layout>
   );
 };
 

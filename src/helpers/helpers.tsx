@@ -32,9 +32,27 @@ export async function fetchQuestions(payload: string) {
 }
 
 // add New question
-export async function addQuestion(token: string, formData: MyFormData) {
+export async function addQuestion(
+  token: string,
+  formData: MyFormData,
+  refetch: () => void
+) {
   try {
     const { data } = await axios.post('/questions', formData, {
+      headers: { token },
+    });
+    refetch();
+    return data;
+  } catch (error) {
+    console.error('Error adding question:', error);
+    throw new Error('Failed to add question');
+  }
+}
+
+// delete question
+export async function deleteQuestion(token: string, payload: string) {
+  try {
+    const { data } = await axios.delete(`/questions/${payload}`, {
       headers: { token },
     });
     fetchQuestions(token);
@@ -42,5 +60,24 @@ export async function addQuestion(token: string, formData: MyFormData) {
   } catch (error) {
     console.error('Error adding question:', error);
     throw new Error('Failed to add question');
+  }
+}
+
+// delete question
+export async function editQuestion(
+  token: string,
+  payload: string,
+  formData: MyFormData,
+  refetch: () => void
+) {
+  try {
+    const { data } = await axios.put(`/questions/${payload}`, formData, {
+      headers: { token },
+    });
+    refetch();
+    return data;
+  } catch (error) {
+    console.error('Error edit question:', error);
+    throw new Error('Failed to edit question');
   }
 }

@@ -1,7 +1,7 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Dialog, Transition } from '@headlessui/react';
-import { addQuestion } from 'src/helpers/helpers';
+import { addQuestion, editQuestion } from 'src/helpers/helpers';
 import { MyDialogProps, MyFormData } from 'src/models/model';
 
 import { Button } from '..';
@@ -12,14 +12,40 @@ export function Modal({
   title,
   token,
   onClose,
+  refetch,
+  questionId,
+  existingQuestionData,
 }: MyDialogProps) {
   const [question, setQuestion] = useState('');
-  const [options, setOptions] = useState<string[]>(['', '', '', '', '']);
+  const [options, setOptions] = useState<string[]>(
+    Array.from(
+      { length: 5 },
+      (_, index) => existingQuestionData?.options[index] || ''
+    )
+  );
+
+  useEffect(() => {
+    if (isOpen && existingQuestionData) {
+      setQuestion(existingQuestionData.question);
+
+      const paddedOptions = existingQuestionData.options
+        ? [
+            ...existingQuestionData.options,
+            ...Array(5 - existingQuestionData.options.length).fill(''),
+          ]
+        : ['', '', '', '', ''];
+
+      setOptions(paddedOptions);
+    } else {
+      // Reset form fields when the modal is closed
+      setQuestion('');
+      setOptions(Array.from({ length: 5 }, () => ''));
+    }
+  }, [isOpen, existingQuestionData]);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // filter non-empty options to the options array
     const nonEmptyOptions = options.filter((option) => option.trim() !== '');
 
     if (nonEmptyOptions.length < 3 || nonEmptyOptions.length > 5) {
@@ -31,8 +57,22 @@ export function Modal({
       options: nonEmptyOptions,
       question,
     };
-    addQuestion(token, formData);
-    setIsOpen(false);
+
+    try {
+      if (questionId === null) {
+        addQuestion(token, formData, refetch);
+      } else {
+        editQuestion(token, questionId ?? '', formData, refetch);
+      }
+      setIsOpen(false);
+      onClose();
+
+      // Reset form fields
+      setQuestion('');
+      setOptions(Array.from({ length: 5 }, () => ''));
+    } catch (error) {
+      console.error('Error adding/editing question:', error);
+    }
   }
 
   return (

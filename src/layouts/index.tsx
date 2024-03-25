@@ -7,9 +7,10 @@ type Props = {
 export const Layout = ({ children }: Props) => {
   return (
     <div>
-      <div>Header</div>
+      <div className="title">
+        <h4 className="p-4 text-2xl font-bold sm:text-4xl">Question Time</h4>
+      </div>
       {children}
-      <footer>footer</footer>
     </div>
   );
 };
