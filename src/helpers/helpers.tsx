@@ -7,8 +7,9 @@ axios.defaults.baseURL = process.env.NEXT_PUBLIC_SERVER_URL;
 // register User and get token
 export async function RegisterMail(payload: string) {
   try {
-    const { data } = await axios.post('/token', { email: payload });
-    return data;
+    const response = await axios.post('/token', { email: payload });
+
+    return response.data.token;
   } catch (error) {
     console.error('Error:', error);
     throw new Error('Network error');

@@ -21,7 +21,7 @@ const Home: NextPageWithLayout = () => {
     e.preventDefault();
 
     try {
-      const { data: token } = await RegisterMail(email); // Call RegisterMail function
+      const token = await RegisterMail(email);
 
       if (!token) {
         toast.error('Token not received, please try again');
