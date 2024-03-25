@@ -35,8 +35,7 @@ export const HomePage = () => {
     }
 
     if (!token) {
-      toast.error('Token not received');
-      router.push('/error-page');
+      toast.error('Token not received please try again');
     } else {
       // If token is available
       setToken(token);

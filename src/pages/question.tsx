@@ -55,7 +55,7 @@ const Index = () => {
     if (!token) {
       router.push('/');
     }
-  }, [token]);
+  }, [router, token]);
 
   return (
     <Layout>
