@@ -3,7 +3,6 @@ import toast from 'react-hot-toast';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { RegisterMail } from 'src/helpers/helpers';
-import { useRegister } from 'src/hooks/hooks'; // Import useRegister hook
 import { Layout } from 'src/layouts';
 import { useAuthStore } from 'src/store/store';
 
